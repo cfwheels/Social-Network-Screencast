@@ -10,6 +10,10 @@
 	
 		<cfset user = model("person").new(params.user)>
 		<cfset user.save()>
+		
+		<cfif user.hasErrors()>
+			<cfset renderPage(action="register")>
+		</cfif>
 	
 	</cffunction>
 

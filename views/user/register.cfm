@@ -2,9 +2,17 @@
 
 <cfoutput>
 
+<style type="text/css">
+.field-with-errors input {
+	border: 1px solid red;
+}
+</style>
+
 <h1>Register for Social Network</h1>
 
 #startFormTag(action="create")#
+
+#errorMessagesFor("user")#
 
 #textField(label="First Name", objectName="user", property="firstName")#
 #textField(label="Last Name", objectName="user", property="lastName")#
