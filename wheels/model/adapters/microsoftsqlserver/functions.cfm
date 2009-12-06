@@ -22,7 +22,7 @@
 			case "float": {loc.returnValue = "cf_sql_float"; break;}
 			case "int": {loc.returnValue = "cf_sql_integer"; break;}
 			case "image": {loc.returnValue = "cf_sql_longvarbinary"; break;}
-			case "text": case "ntext": {loc.returnValue = "cf_sql_longvarchar";	break;}
+			case "text": case "ntext": case "xml": {loc.returnValue = "cf_sql_longvarchar";	break;}
 			case "numeric":	{loc.returnValue = "cf_sql_numeric"; break;}
 			case "real": {loc.returnValue = "cf_sql_real"; break;}
 			case "smallint": {loc.returnValue = "cf_sql_smallint"; break;}
@@ -97,6 +97,8 @@
 		arguments.datasource = variables.instance.connection.datasource;
 		arguments.username = variables.instance.connection.username;
 		arguments.password = variables.instance.connection.password;
+		if (application.wheels.serverName == "Railo")
+			arguments.psq = false; // set queries in Railo to not preserve single quotes on the entire cfquery block (we'll handle this individually in the SQL statement instead)  
 		loc.sql = arguments.sql;
 		loc.limit = arguments.limit;
 		loc.offset = arguments.offset;

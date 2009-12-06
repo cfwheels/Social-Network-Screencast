@@ -27,6 +27,9 @@
 		if ((application.wheels.serverName == "Railo" && loc.majorVersion < 3) || (application.wheels.serverName == "Adobe ColdFusion" && loc.majorVersion < 8))
 			$throw(type="Wheels.NoSupport", message="#application.wheels.serverName# #application.wheels.serverVersion# is not supported by Wheels.", extendedInfo="Upgrade to Adobe ColdFusion 8 or Railo 3.");
 
+		// copy over the cgi variables we need to the request scope (since we use some of these to determine URL rewrite capabilities we need to be able to access them directly on application start for example)
+		request.cgi = $cgiScope();
+		
 		// set up containers for routes, caches, settings etc
 		application.wheels.version = "1.0";
 		application.wheels.controllers = {};
@@ -51,7 +54,7 @@
 		application.wheels.cacheLastCulledAt = Now();
 
 		// set up paths to various folders in the framework
-		application.wheels.webPath = Replace(cgi.script_name, Reverse(spanExcluding(Reverse(cgi.script_name), "/")), "");
+		application.wheels.webPath = Replace(request.cgi.script_name, Reverse(spanExcluding(Reverse(request.cgi.script_name), "/")), "");
 		application.wheels.rootPath = "/" & ListChangeDelims(application.wheels.webPath, "/", "/");
 		application.wheels.rootcomponentPath = ListChangeDelims(application.wheels.webPath, ".", "/");
 		application.wheels.wheelsComponentPath = ListAppend(application.wheels.rootcomponentPath, "wheels", ".");
@@ -88,14 +91,10 @@
 		$include(template="#application.wheels.configPath#/settings.cfm");
 		$include(template="#application.wheels.configPath#/#application.wheels.environment#/settings.cfm");
 
-		// load developer routes and add wheels default ones at the end
-		$include(template="#application.wheels.configPath#/routes.cfm");
-		$include(template="wheels/events/onapplicationstart/routes.cfm");
-
 		// load plugins
 		application.wheels.plugins = {};
 		application.wheels.incompatiblePlugins = "";
-		application.wheels.mixableComponents = "dispatch,controller,model,microsoftsqlserver,mysql,oracle,postgresql";
+		application.wheels.mixableComponents = "application,dispatch,controller,model,microsoftsqlserver,mysql,oracle,postgresql";
 		application.wheels.mixins = {};
 		application.wheels.dependantPlugins = "";
 		loc.pluginFolder = this.rootDir & "plugins";
@@ -132,10 +131,11 @@
 					$zip(action="unzip", destination=loc.thisPluginFolder, file=loc.thisPluginFile, overwrite=application.wheels.overwritePlugins);
 					loc.fileName = LCase(loc.pluginName) & "." & loc.pluginName;
 					loc.plugin = $createObjectFromRoot(path=application.wheels.pluginComponentPath, fileName=loc.fileName, method="init");
-					if (!StructKeyExists(loc.plugin, "version") || loc.plugin.version == SpanExcluding(application.wheels.version, " ") || application.wheels.loadIncompatiblePlugins)
+					loc.plugin.pluginVersion = loc.pluginVersion;
+					if (!StructKeyExists(loc.plugin, "version") || ListFind(loc.plugin.version, SpanExcluding(application.wheels.version, " ")) || application.wheels.loadIncompatiblePlugins)
 					{
 						application.wheels.plugins[loc.pluginName] = loc.plugin;
-						if (StructKeyExists(loc.plugin, "version") && loc.plugin.version != SpanExcluding(application.wheels.version, " "))
+						if (StructKeyExists(loc.plugin, "version") && !ListFind(loc.plugin.version, SpanExcluding(application.wheels.version, " ")))
 							application.wheels.incompatiblePlugins = ListAppend(application.wheels.incompatiblePlugins, loc.pluginName);
 					}
 				}
@@ -190,7 +190,7 @@
 			{
 				for (loc.keyTwo in application.wheels.plugins[loc.key])
 				{
-					if (!ListFindNoCase("init,version", loc.keyTwo))
+					if (!ListFindNoCase("init,version,pluginVersion", loc.keyTwo))
 					{
 						if (ListFindNoCase(loc.addedFunctions, loc.keyTwo))
 							$throw(type="Wheels.IncompatiblePlugin", message="#loc.key# is incompatible with a previously installed plugin.", extendedInfo="make sure none of the plugins you have installed overrides the same Wheels functions.");
@@ -215,6 +215,14 @@
 				}
 			}
 		}
+		
+		// allow developers to inject plugins into the application variables scope
+		if (!StructIsEmpty(application.wheels.mixins))
+			$include(template="wheels/plugins/injection.cfm");
+
+		// load developer routes and add wheels default ones at the end
+		$include(template="#application.wheels.configPath#/routes.cfm");
+		$include(template="wheels/events/onapplicationstart/routes.cfm");
 
 		// add all public controller / view methods to a list of methods that you should not be allowed to call as a controller action from the url
 		loc.allowedGlobalMethods = "get,set,addroute";
@@ -229,7 +237,7 @@
 		}
 
 		// create the dispatcher that will handle all incoming requests
-		application.wheels.dispatch = CreateObject("component", "#application.wheels.wheelsComponentPath#.Dispatch");
+		application.wheels.dispatch = $createObjectFromRoot(path=application.wheels.wheelsComponentPath, fileName="Dispatch", method="$returnDispatcher");
 		
 		// run the developer's on application start code
 		$include(template="#application.wheels.eventPath#/onapplicationstart.cfm");

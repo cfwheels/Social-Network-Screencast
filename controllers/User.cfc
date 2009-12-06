@@ -13,6 +13,9 @@
 		
 		<cfif user.hasErrors()>
 			<cfset renderPage(action="register")>
+		<cfelse>
+			<cfset flashInsert(success="You've successfully registered. Welcome!")>
+			<cfset redirectTo(controller="main", action="home")>
 		</cfif>
 	
 	</cffunction>

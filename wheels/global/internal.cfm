@@ -1,3 +1,15 @@
+<cffunction name="$cgiScope" returntype="struct" access="public" output="false" hint="This copies all the variables Wheels needs from the CGI scope to the request scope.">
+	<cfargument name="keys" type="string" required="false" default="request_method,http_x_requested_with,http_referer,server_name,path_info,script_name,query_string,remote_addr,server_port,server_protocol">
+	<cfscript>
+		var loc = {};
+		loc.returnValue = {};
+		loc.iEnd = ListLen(arguments.keys);
+		for (loc.i=1; loc.i <= loc.iEnd; loc.i++)
+			loc.returnValue[ListGetAt(arguments.keys, loc.i)] = cgi[ListGetAt(arguments.keys, loc.i)];
+	</cfscript>
+	<cfreturn loc.returnValue>
+</cffunction>
+
 <cffunction name="$dollarify" returntype="struct" access="public" output="false">
 	<cfargument name="input" type="struct" required="true">
 	<cfargument name="on" type="string" required="true">
@@ -221,7 +233,7 @@
 </cffunction>
 
 <cffunction name="$flatten" returntype="string" access="public" output="false">
-	<cfargument name="values" type="struct" required="true">
+	<cfargument name="values" type="any" required="true">
 	<cfscript>
 		var loc = {};
 		loc.returnValue = "";
@@ -244,6 +256,19 @@
 					loc.returnValue = loc.returnValue & "&" & loc.i & "=""" & arguments.values[loc.i] & """";
 				else
 					loc.returnValue = loc.returnValue & "&" & $flatten(arguments.values[loc.i]);
+			}
+		}
+		else if (IsQuery(arguments.values))
+		{
+			loc.iEnd = arguments.values.recordCount;
+			for (loc.i=1; loc.i <= loc.iEnd; loc.i++)
+			{
+				loc.jEnd = ListLen(arguments.values.columnList);
+				for (loc.j=1; loc.j <= loc.jEnd; loc.j++)
+				{
+					loc.jItem = ListGetAt(arguments.values.columnList, loc.j);
+					loc.returnValue = loc.returnValue & "&" & loc.jItem & loc.i & "=""" & arguments.values[loc.jItem][loc.i] & """";
+				}
 			}
 		}
 		loc.returnValue = Right(loc.returnValue, Len(loc.returnValue)-1);

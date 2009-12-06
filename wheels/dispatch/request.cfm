@@ -1,3 +1,7 @@
+<cffunction name="$returnDispatcher" returntype="any" access="public" output="false">
+	<cfreturn this>
+</cffunction>
+
 <cffunction name="$runFilters" returntype="void" access="public" output="false">
 	<cfargument name="controller" type="any" required="true">
 	<cfargument name="actionName" type="string" required="true">
@@ -32,11 +36,11 @@
 			loc.verification = loc.verifications[loc.i];
 			if ((!Len(loc.verification.only) && !Len(loc.verification.except)) || (Len(loc.verification.only) && ListFindNoCase(loc.verification.only, arguments.actionName)) || (Len(loc.verification.except) && !ListFindNoCase(loc.verification.except, arguments.actionName)))
 			{
-				if (IsBoolean(loc.verification.post) && ((loc.verification.post && cgi.request_method != "post") || (!loc.verification.post && cgi.request_method == "post")))
+				if (IsBoolean(loc.verification.post) && ((loc.verification.post && request.cgi.request_method != "post") || (!loc.verification.post && request.cgi.request_method == "post")))
 					loc.abort = true;
-				if (IsBoolean(loc.verification.get) && ((loc.verification.get && cgi.request_method != "get") || (!loc.verification.get && cgi.request_method == "get")))
+				if (IsBoolean(loc.verification.get) && ((loc.verification.get && request.cgi.request_method != "get") || (!loc.verification.get && request.cgi.request_method == "get")))
 					loc.abort = true;
-				if (IsBoolean(loc.verification.ajax) && ((loc.verification.ajax && cgi.http_x_requested_with != "XMLHTTPRequest") || (!loc.verification.ajax && cgi.http_x_requested_with == "XMLHTTPRequest")))
+				if (IsBoolean(loc.verification.ajax) && ((loc.verification.ajax && request.cgi.http_x_requested_with != "XMLHTTPRequest") || (!loc.verification.ajax && request.cgi.http_x_requested_with == "XMLHTTPRequest")))
 					loc.abort = true;
 				loc.jEnd = ListLen(loc.verification.params);
 				for (loc.j=1; loc.j <= loc.jEnd; loc.j++)
@@ -62,7 +66,7 @@
 				if (Len(loc.verification.handler))
 				{
 					$invoke(componentReference=arguments.controller, method=loc.verification.handler);
-					$location(url=cgi.http_referer, addToken=false);
+					$location(url=request.cgi.http_referer, addToken=false);
 				}
 				else
 				{
@@ -74,8 +78,8 @@
 </cffunction>
 
 <cffunction name="$getRouteFromRequest" returntype="string" access="public" output="false">
-	<cfargument name="pathInfo" type="string" required="false" default="#cgi.path_info#">
-	<cfargument name="scriptName" type="string" required="false" default="#cgi.script_name#">
+	<cfargument name="pathInfo" type="string" required="false" default="#request.cgi.path_info#">
+	<cfargument name="scriptName" type="string" required="false" default="#request.cgi.script_name#">
 	<cfscript>
 		var returnValue = "";
 		if (arguments.pathInfo == arguments.scriptName || arguments.pathInfo == "/" || arguments.pathInfo == "")
@@ -325,7 +329,7 @@
 		if (loc.actionIsCachable)
 		{
 			loc.category = "action";
-			loc.key = "#cgi.script_name##cgi.path_info##cgi.query_string#";
+			loc.key = "#request.cgi.script_name##request.cgi.path_info##request.cgi.query_string#";
 			loc.lockName = loc.category & loc.key;
 			loc.conditionArgs = {};
 			loc.conditionArgs.key = loc.key;
@@ -352,7 +356,7 @@
 		// clear the flash (note that this is not done for redirectTo since the processing does not get here)
 		StructClear(session.flash);
 	</cfscript>
-	<cfreturn request.wheels.response>
+	<cfreturn Trim(request.wheels.response)>
 </cffunction>
 
 <cffunction name="$callActionAndAddToCache" returntype="string" access="public" output="false">
