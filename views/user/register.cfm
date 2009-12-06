@@ -17,6 +17,8 @@
 #textField(label="First Name", objectName="user", property="firstName")#
 #textField(label="Last Name", objectName="user", property="lastName")#
 #textField(label="Email", objectName="user", property="email")#
+#passwordField(label="Password", objectName="user", property="password")#
+#passwordField(label="Confirm Password", objectName="user", property="passwordConfirmation")#
 
 <fieldset>
 	<legend>Gender</legend>
