@@ -1,6 +1,16 @@
 <!--- Place HTML here that should be used as the default layout of your application --->
+<cfoutput>
 <html>
-	<body>
-		<cfoutput>#contentForLayout()#</cfoutput>
-	</body>
+<head>
+#stylesheetLinkTag("styles")#
+</head>
+
+<body>
+	<div id="wrapper">
+		#contentForLayout()#
+	</div>
+</body>
+
 </html>
+
+</cfoutput>

@@ -28,7 +28,7 @@
 
 <fieldset>
 	<legend>Profile Address</legend>
-	#textField(label="http://#cgi.server_name#/profile/", objectName="user", property="urlId")#
+	#textField(label="http://#cgi.server_name#/profile/", appendToLabel="", objectName="user", property="urlId")#
 </fieldset>
 
 <div>

@@ -2,6 +2,7 @@
 <cfset this.name = Hash(this.rootDir)>
 <cfset this.sessionManagement = true>
 <cfif StructKeyExists(server, "railo")>
+	<cfinclude template="../config/app.cfm">
 	<cfinclude template="global/appfunctions.cfm">
 	<cfinclude template="controller/appfunctions.cfm">
 	<cfinclude template="events/onapplicationstart.cfm">
@@ -14,6 +15,7 @@
 	<cfinclude template="events/onmissingtemplate.cfm">
 	<cfinclude template="events/onerror.cfm">
 <cfelse>
+	<cfinclude template="config/app.cfm">
 	<cfinclude template="wheels/global/appfunctions.cfm">
 	<cfinclude template="wheels/controller/appfunctions.cfm">
 	<cfinclude template="wheels/events/onapplicationstart.cfm">

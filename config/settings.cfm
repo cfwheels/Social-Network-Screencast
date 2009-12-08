@@ -10,3 +10,8 @@
 	To run with rewriting "On", you need to apply the necessary rewrite rules on the web server first.
 	<cfset set(URLRewriting="Partial")>
 --->
+
+	<!--- Form helpers --->
+	<cfset set(functionName="textField", labelPlacement="before", prependToLabel="<div>", append="</div>", appendToLabel="<br />")>
+	<cfset set(functionName="passwordField", labelPlacement="before", prependToLabel="<div>", append="</div>", appendToLabel="<br />")>
+	<cfset set(functionName="radioButton", labelPlacement="after", prepend="<div>", appendToLabel="</div>")>
