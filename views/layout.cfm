@@ -7,6 +7,7 @@
 
 <body>
 	<div id="wrapper">
+		#linkTo(text="Logout", controller="main", action="logout")#
 		#contentForLayout()#
 	</div>
 </body>
