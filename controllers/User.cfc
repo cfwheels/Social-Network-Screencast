@@ -19,5 +19,11 @@
 		</cfif>
 	
 	</cffunction>
-
+	
+	<cffunction name="profile">
+	
+		<cfset user = model("person").findByKey(params.key)>
+	
+	</cffunction>
+	
 </cfcomponent>

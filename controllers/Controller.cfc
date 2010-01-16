@@ -2,7 +2,7 @@
 
 	<cffunction name="init">
 	
-		<cfset filters(through="checkLogin", except="login,register,signin")>
+		<cfset filters(through="checkLogin", except="login,register,signin,profile")>
 	
 	</cffunction>
 
