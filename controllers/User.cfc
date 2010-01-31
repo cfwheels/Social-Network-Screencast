@@ -22,7 +22,7 @@
 	
 	<cffunction name="profile">
 	
-		<cfset user = model("person").findByKey(params.key)>
+		<cfset user = model("person").findOneByUrlId(params.urlId)>
 	
 	</cffunction>
 	
