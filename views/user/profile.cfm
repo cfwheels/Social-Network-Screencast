@@ -5,7 +5,7 @@
 <h1>#user.firstName# #user.lastName#</h1>
 <p>
 	<strong>Gender</strong><br />
-	#user.gender#
+	#displayGender(user.gender)#
 </p>
 <p>
 	<strong>Member Since</strong><br />
