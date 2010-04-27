@@ -1,5 +1,11 @@
 <cfcomponent extends="Controller" output="false">
-
+	
+	<cffunction name="home">
+	
+		<cfset users = model("person").findAll(order="createdAt DESC", maxRows=3)>
+	
+	</cffunction>
+	
 	<cffunction name="login">
 	
 		<cfset user = model("person").new()>
