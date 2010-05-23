@@ -2,6 +2,10 @@
 
 	<cffunction name="init">
 	
+		<!--- Associations --->
+		<cfset hasMany("statuses")>
+	
+		<!--- Validations --->
 		<cfset validatesPresenceOf("firstName,lastName,email,gender,urlId")>
 		<cfset validatesFormatOf(property="email", type="email")>
 		<cfset validatesLengthOf(property="firstName", maximum=30)>

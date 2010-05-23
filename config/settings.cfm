@@ -15,3 +15,4 @@
 	<cfset set(functionName="textField", labelPlacement="before", prependToLabel="<div>", append="</div>", appendToLabel="<br />")>
 	<cfset set(functionName="passwordField", labelPlacement="before", prependToLabel="<div>", append="</div>", appendToLabel="<br />")>
 	<cfset set(functionName="radioButton", labelPlacement="after", prepend="<div>", appendToLabel="</div>")>
+	<cfset set(functionName="textArea", labelPlacement="before", prependToLabel="<div>", append="</div>", appendToLabel="<br />")>

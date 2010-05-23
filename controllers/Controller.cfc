@@ -8,7 +8,9 @@
 
 	<cffunction name="checkLogin">
 	
-		<cfif not StructKeyExists(session, "user")>
+		<cfif StructKeyExists(session, "user")>
+			<cfset loggedInUser = model("person").findByKey(session.user.id)>
+		<cfelse>
 			<cfset redirectTo(controller="main", action="login")>
 		</cfif>
 	

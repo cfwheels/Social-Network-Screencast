@@ -23,6 +23,7 @@
 	<cffunction name="profile">
 	
 		<cfset user = model("person").findOneByUrlId(params.urlId)>
+		<cfset statusUpdates = user.statuses(order="createdAt DESC", maxRows=10)>
 	
 	</cffunction>
 	
