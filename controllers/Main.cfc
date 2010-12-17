@@ -1,5 +1,9 @@
 <cfcomponent extends="Controller" output="false">
 	
+	<cffunction name="init">
+		<cfset provides("html,json,xml")>
+	</cffunction>
+	
 	<cffunction name="home">
 		
 		<cfparam name="params.page" default="1">
@@ -7,7 +11,8 @@
 		<cfset users = model("person").findAll(order="createdAt DESC", maxRows=3)>
 		<cfset status = model("status").new()>
 		<cfset statusUpdates = model("status").findAll(include="person", order="createdAt DESC", perPage=15, page=params.page)>
-	
+		<cfset renderWith(statusUpdates)>
+		
 	</cffunction>
 	
 	<cffunction name="login">

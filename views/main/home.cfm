@@ -42,7 +42,8 @@
 	</div>
 </cfloop>
 
-#paginationLinks(route="homeWithPageNum", windowSize=2, alwaysShowAnchors=false)#
+<h3>Page</h3>
+#paginationLinks(route="homeWithPageNum", pageNumberAsParam=false, windowSize=2, alwaysShowAnchors=false)#
 
 <!--- Newest members --->
 <h2>Newest Members</h2>
